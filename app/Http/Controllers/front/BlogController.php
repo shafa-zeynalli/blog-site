@@ -43,12 +43,10 @@ class BlogController extends Controller
      */
     public function show(string $blogId)
     {
-//        dd($blogId);
+        //bura singlepagedi
         $blog = Blog::whereIsPublic(1)->findOrFail($blogId);
-//dd($blog);
 
         if($blog->token){
-//            dd('hgfg');
             if($blog->is_public == 0){
                 abort(404);
             }
@@ -85,8 +83,9 @@ class BlogController extends Controller
 
     public function showToken($token)
     {
+        // burasi singlepagedi sadece olaraq urlden token gelir
+
         $token = Token::where('value',$token)->whereStatus(1)->firstOrFail();
-//        dd(3);
          if ($token->expired_date < Carbon::now() ){
              $token->update(['status'=>0]);
              $blogItem = Blog::whereId($token->blog_id)->firstOrFail();
@@ -98,10 +97,7 @@ class BlogController extends Controller
         $blog = Blog::whereIsPublic(0)->whereHas('token',function($query){
             $query->where('status',1);
         })->findOrFail($blogItem->id);
-//dd($blog);
-
         if($blog->token){
-//            dd('hgfg');
             if($blog->status == 0){
                 abort(404);
             }
@@ -112,4 +108,4 @@ class BlogController extends Controller
 
     }
 }
-// is public 0 olanda adisen giris ede bilmez linkdeen giris ede biler. status her iki hal ucun de 1 olmalidi
+// is public 0 olanda adiden giris ede bilmez linkdeen giris ede biler. status her iki hal ucun de 1 olmalidi

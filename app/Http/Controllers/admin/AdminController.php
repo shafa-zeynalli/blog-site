@@ -54,6 +54,15 @@ class AdminController extends Controller
         $blog->is_public = $request->input('is_public');
         $blog->description = $request->input('description');
         $blog->save();
+
+        if ($blog->is_public == 0){
+            $token = new Token();
+            $token->value=Str::random(15);
+            $token->blog_id=$blog->id;
+            $token->start_date = \Carbon\Carbon::now();
+            $token->expired_date = \Carbon\Carbon::now()->addHour(4);
+            $token->save();
+        }
         return redirect()->route('admin.blog.index')->with('success', 'Blog member created successfully');
     }
 
